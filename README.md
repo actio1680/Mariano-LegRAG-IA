@@ -1,22 +1,31 @@
-<<<<<<< HEAD
-# ⚖️ AI Lawyer - RAG with DeepSeek R1
 
-<div align="center">
+# ⚖️ Mariano LegRAG IA
 
-![Python](https://img.shields.io/badge/python-v3.8+-blue.svg)
-![Streamlit](https://img.shields.io/badge/streamlit-1.28+-red.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
-![Status](https://img.shields.io/badge/status-active-success.svg)
+<div align= "center">
 
-**An AI-powered legal chatbot that leverages Retrieval-Augmented Generation (RAG) with DeepSeek R1 for advanced legal reasoning and document analysis.**
+**Mariano es un chatbot legal potenciado por inteligencia artificial que utiliza Generación Aumentada por Recuperación (RAG) con el modelo DeepSeek R1 para ofrecer razonamiento jurídico avanzado y análisis preciso de documentos legales.**
 
-[🚀 Live Demo](https://ai-lawyer-rag-with-deepseek.streamlit.app/) | [📖 Documentation](#-how-it-works) | [🛠️ Installation](#️-installation--setup)
+| [📖 Documentación](#-how-it-works) | [🛠️ Instalación](#️-installation--setup)
 
 </div>
 
----
+## 📌 Diferencias con el proyecto original
 
-## 📋 Table of Contents
+| Característica | Proyecto original | Mariano-LegRAG-IA |
+|----------------|-------------------|-------------------|
+| **LLM** | Groq (DeepSeek) | DeepSeek Reasoner API directa |
+| **Búsqueda** | Semántica (FAISS) | **Híbrida** (BM25 + FAISS + RRF) |
+| **Precisión** | Media | **Alta** (palabras clave + contexto) |
+| **Gestión documentos** | Manual | Automática (hash + sincronización) |
+| **Historial** | No | Sí (exportable a TXT) |
+
+
+
+## 🧠 Búsqueda híbrida: por qué mejora la precisión
+La búsqueda tradicional por similitud semántica (FAISS) es potente, pero falla cuando el usuario usa **términos exactos** (ej: "Artículo 74", "multa coactiva").
+
+
+## 📋 Contenido
 
 - [Overview](#-overview)
 - [Features](#-features)
