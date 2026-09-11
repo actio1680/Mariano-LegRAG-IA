@@ -1,7 +1,5 @@
-
-# ⚖️ Mariano LegRAG IA
-
 <div align= "center">
+⚖️ Mariano LegRAG IA
 
 **Mariano es un chatbot legal potenciado por inteligencia artificial que utiliza Generación Aumentada por Recuperación (RAG) con el modelo DeepSeek R1 para ofrecer razonamiento jurídico avanzado y análisis preciso de documentos legales.**
 
