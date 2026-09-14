@@ -1,57 +1,72 @@
+## ⚖️ Mariano LegRAG IA
+
 <div align= "center">
-⚖️ Mariano LegRAG IA
-
-**Mariano es un chatbot legal potenciado por inteligencia artificial que utiliza Generación Aumentada por Recuperación (RAG) con el modelo DeepSeek R1 para ofrecer razonamiento jurídico avanzado y análisis preciso de documentos legales.**
-
-| [📖 Documentación](#-how-it-works) | [🛠️ Instalación](#️-installation--setup)
-
+Mariano es un chatbot legal potenciado por inteligencia artificial que utiliza Generación Aumentada por Recuperación (RAG) con el modelo DeepSeek R1 para ofrecer razonamiento jurídico avanzado y análisis preciso de documentos legales.
 </div>
 
 ## 📋 Contenido
 
-- [Capacidades](#-Capacidades-y-Características-Principales)
-- [Funcionalidades](#-features)
-- [Mejoras](#-features)
-- [Demo](#-project-demo)
-- [Architecture](#-architecture)
-- [Installation & Setup](#️-installation--setup)
-- [Usage](#-usage)
-- [How It Works](#-how-it-works)
-- [API Configuration](#-api-configuration)
-- [Deployment](#-deployment)
-- [Contributing](#-contributing)
-- [Future Improvements](#-future-improvements)
-- [License](#-license)
+- [¿Qué es?](#-qué-es)
+- [Arquitectura](#-arquitectura)
+- [Pipeline de recuperación híbrida](#-pipeline-de-recuperación-híbrida)
+- [Tecnologías y conceptos](#-tecnologías-y-conceptos)
+- [Estructura del proyecto](#-estructura-del-proyecto)
+- [Instalación](#-instalación)
+- [Uso](#-uso)
+- [Configuración de API](#-configuración-de-api)
+- [Despliegue](#-despliegue)
+- [Roadmap](#-roadmap)
+- [Licencia](#-licencia)
 
-## 🎯 Capacidades y Características Principales
+## 🎯 ¿Qué es?
 
-**Mariano LegRAG IA** es un asistente legal inteligente que combina **razonamiento avanzado con DeepSeek R1 (API directa)** y **recuperación híbrida de información** para ofrecer análisis jurídicos precisos, fundamentados y listos para usar.
-### ✨ Qué hace y cómo lo hace
+**Mariano LegRAG IA** es un asistente legal que analiza documentos jurídicos en PDF y responde preguntas en lenguaje natural. A diferencia de un chatbot genérico, Mariano:
 
-| Característica | Qué logra | Cómo lo hace |
-|---------------|-----------|--------------|
-| 📂 **Procesamiento Inteligente de Documentos** | Analiza contratos, sentencias y normas en PDF con extracción estructurada | Chunking contextual + metadatos + detección automática de secciones |
-| 🔍 **Búsqueda Híbrida de Alta Precisión** | Encuentra información relevante incluso con consultas complejas o términos exactos | **BM25** (keywords) + **FAISS** (semántica) + **RRF** (fusión de rankings) |
-| 🧠 **Razonamiento Jurídico Avanzado** | Genera análisis lógicos, interpreta normas y evalúa riesgos con criterio profesional | DeepSeek R1 vía API directa, sin intermediarios, con prompts especializados |
-| 🛡️ **Respuestas Fundamentadas y Confiables** | Reduce alucinaciones y aumenta la confianza en las respuestas | Grounding en textos legales reales con citas explícitas y referencias verificables |
-| 📄 **Reportes Descargables y Profesionales** | Entrega resultados listos para usar en flujos de trabajo legales | Generación automática en TXT/Markdown con formato estructurado y listo para compartir |
-| 💬 **Chat Interactivo con Memoria** | Permite conversaciones naturales con seguimiento de contexto y preguntas de seguimiento | Historial persistente, exportable a TXT/JSON, con gestión de estado por sesión |
-| 🔁 **Sincronización Automática de Documentos** | Evita reprocesar documentos sin cambios, ahorrando tiempo y recursos | Detección de modificaciones mediante hash + indexación incremental |
-| 🔒 **Privacidad y Procesamiento Local** | Mantiene tus documentos bajo tu control, cumpliendo con estándares de confidencialidad | Extracción y chunking en local; solo se envían fragments necesarios a la API con TLS |
+- **Recupera** fragmentos relevantes con búsqueda híbrida (léxica + semántica).
+- **Razona** sobre ellos con DeepSeek R1 vía API directa.
+- **Fundamenta** cada respuesta con citas verificables del documento.
+- **Genera** reportes descargables en TXT/Markdown.
 
-### 🚀 Mejoras clave frente al proyecto original
+Todo el procesamiento de documentos ocurre en local; solo los fragmentos necesarios se envían a la API de DeepSeek sobre TLS.
 
-| Área | Proyecto original | Mariano-LegRAG IA ✅ |
-|------|------------------|---------------------|
-| **LLM** | DeepSeek vía Groq (proxy) | **DeepSeek Reasoner API directa** 🎯 |
-| **Búsqueda** | Semántica (FAISS) | **Híbrida**: BM25 + FAISS + RRF 🔍 |
-| **Precisión** | Media | **Alta**: keywords + contexto semántico |
-| **Gestión documental** | Manual | **Automática**: hash + sincronización incremental |
-| **Historial de chat** | ❌ No | ✅ Sí, exportable a TXT/JSON |
-| **Latencia** | Variable (depende de Groq) | **Optimizada**: conexión directa + caching |
-| **Costo operativo** | Groq + DeepSeek | **Solo DeepSeek** (sin intermediarios) |
 
-> 💡 **En una frase**: Mariano LegRAG IA no solo busca información legal, sino que **la comprende, razona sobre ella y genera respuestas útiles**, con una arquitectura moderna diseñada para el contexto jurídico hispanohablante.
+## 🏗️ Arquitectura
+
+## 🏗️ Arquitectura
+
+<div align="left" style="font-family: monospace; line-height: 1.4;">
+
+📄 <b>PDF legal</b><br>
+│<br>
+▼<br>
+① <b>Extracción de texto</b> &nbsp;<i>(pdfplumber)</i><br>
+         │<br>
+         ▼<br>
+② <b>Chunking contextual</b> &nbsp;<i>(por artículo / cláusula)</i><br>
+│<br>
+▼<br>
+③ <b>Indexación</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;├──▶ &nbsp;<b>BM25</b> &nbsp;<i>(búsqueda léxica)</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;└──▶ &nbsp;<b>FAISS</b> &nbsp;<i>(búsqueda semántica)</i><br>
+│<br>
+▼<br>
+❓ <b>Pregunta del usuario</b><br>
+│<br>
+▼<br>
+④ <b>Búsqueda híbrida</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;├── <b>BM25</b> &nbsp;<i>(keywords exactas)</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;├── <b>FAISS</b> &nbsp;<i>(contexto semántico)</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;└── <b>RRF</b> &nbsp;<i>(fusión de rankings)</i><br>
+│<br>
+▼<br>
+⑤ <b>Prompt aumentado</b> &nbsp;──▶&nbsp; 🧠 <b>DeepSeek R1</b> &nbsp;<i>(API directa)</i><br>
+│<br>
+▼<br>
+⑥ <b>Respuesta fundamentada</b> + reporte descargable
+
+</div>
+
+
 
 ## 🧠 Búsqueda híbrida: por qué mejora la precisión
 
