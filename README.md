@@ -29,53 +29,74 @@ Mariano es un chatbot legal potenciado por inteligencia artificial que utiliza G
 
 Todo el procesamiento de documentos ocurre en local; solo los fragmentos necesarios se envían a la API de DeepSeek sobre TLS.
 
-
 ## 🏗️ Arquitectura
 
-## 🏗️ Arquitectura
-
-<div align="left" style="font-family: monospace; line-height: 1.4;">
-
-📄 <b>PDF legal</b><br>
-│<br>
-▼<br>
-① <b>Extracción de texto</b> &nbsp;<i>(pdfplumber)</i><br>
-         │<br>
-         ▼<br>
-② <b>Chunking contextual</b> &nbsp;<i>(por artículo / cláusula)</i><br>
-│<br>
-▼<br>
-③ <b>Indexación</b><br>
-&nbsp;&nbsp;&nbsp;&nbsp;├──▶ &nbsp;<b>BM25</b> &nbsp;<i>(búsqueda léxica)</i><br>
-&nbsp;&nbsp;&nbsp;&nbsp;└──▶ &nbsp;<b>FAISS</b> &nbsp;<i>(búsqueda semántica)</i><br>
-│<br>
-▼<br>
-❓ <b>Pregunta del usuario</b><br>
-│<br>
-▼<br>
-④ <b>Búsqueda híbrida</b><br>
-&nbsp;&nbsp;&nbsp;&nbsp;├── <b>BM25</b> &nbsp;<i>(keywords exactas)</i><br>
-&nbsp;&nbsp;&nbsp;&nbsp;├── <b>FAISS</b> &nbsp;<i>(contexto semántico)</i><br>
-&nbsp;&nbsp;&nbsp;&nbsp;└── <b>RRF</b> &nbsp;<i>(fusión de rankings)</i><br>
-│<br>
-▼<br>
-⑤ <b>Prompt aumentado</b> &nbsp;──▶&nbsp; 🧠 <b>DeepSeek R1</b> &nbsp;<i>(API directa)</i><br>
-│<br>
-▼<br>
-⑥ <b>Respuesta fundamentada</b> + reporte descargable
-
-</div>
-
-
+ ![Arquitectura MARIANO LegRAG IAT](https://raw.githubusercontent.com/actio1680/Mariano-LegRAG-IA/refs/heads/main/arquitectura-Mariano-LegRAG-IA.jpg) 
 
 ## 🧠 Búsqueda híbrida: por qué mejora la precisión
 
-La búsqueda tradicional por similitud semántica (FAISS) es potente para captar la intención de una consulta, pero en el ámbito jurídico tiene una falla crítica: **falla estrepitosamente cuando el usuario usa términos exactos o referencias normativas** (ej: `"Artículo 74"`, `"multa coactiva"`, `"plazo perentorio"`, `"Ley 27.442"`). Los embeddings vectoriales "suavizan" estos identificadores clave, priorizando párrafos que *hablan del tema* pero que pueden omitir el artículo, la resolución o la cláusula exacta que el profesional necesita.
+La búsqueda vectorial pura falla en derecho: los embeddings **suavizan** términos exactos como `"Artículo 74"`, `"Ley 27.442"` o `"plazo perentorio"`. Un recuperador que solo usa FAISS puede inyectar al LLM fragmentos *temáticamente similares* pero *jurídicamente incorrectos* (versiones derogadas, plazos conflictivos, jurisprudencia no vinculante). Esto se conoce como **Context Poisoning**.
 
-### ⚠️ El problema del `Top-K` y el Context Poisoning en Derecho
-Más allá de lo léxico, el enfoque clásico de recuperar los `Top-K` fragmentos más similares es una trampa en entornos de producción legales. Si un sistema simplemente inyecta los 5 resultados vectoriales en el prompt, no está construyendo una arquitectura robusta, sino una **liabilidad técnica**. 
+Mariano lo mitiga con **tres capas**:
 
-En corpus legales con versiones, derogaciones, modificaciones o jurisprudencia contradictoria, la `"similitud semántica"` es un proxy defectuoso para la `"verdad jurídica"`. Una alta similitud coseno suele recuperar textos con solapamiento temático pero con plazos, alcances o interpretaciones **conflictivos o desactualizados**. Esto se conoce como **Context Poisoning**: cuando el recuperador es técnicamente preciso, pero el contexto inyectado es lógicamente incorrecto, el LLM pierde la capacidad de distinguir entre lo `"relevante"` y lo `"vigente/correcto"`, generando respuestas plausibles pero jurídicamente inválidas.
+| Capa | Herramienta | Función |
+|------|-------------|---------|
+| Léxica | **BM25** | Recupera términos exactos: artículos, leyes, fechas, plazos. |
+| Semántica | **FAISS** | Captura intención y contexto: "¿qué pasa si no pago?" → mora, intereses, ejecución. |
+| Fusión | **RRF** | Combina ambos rankings sin modelos extra ni APIs externas. |
+
+**RRF (Reciprocal Rank Fusion)** combina rankings sumando posiciones recíprocas: RRF_score(d) = Σ 1 / (k + rank_i(d))
+
+Penaliza documentos que solo aparecen en un ranking y eleva los que son relevantes en ambos. Se ejecuta en milisegundos en CPU. **Resultado:** menos alucinaciones, más precisión, latencia baja y trazabilidad (se puede auditar qué término activó BM25 y qué contexto aportó FAISS).
+
+## 🛠️ Tecnologías y conceptos
+
+| Tecnología | Qué es | Rol en Mariano |
+|------------|--------|----------------|
+| **DeepSeek R1** | Modelo de razonamiento con cadena de pensamiento larga. | Genera análisis jurídico, interpreta normas, evalúa riesgos. |
+| **API directa DeepSeek** | Llamada a `api.deepseek.com` sin intermediarios. | Menos latencia, menos costo, control total del prompt. |
+| **RAG** | *Retrieval-Augmented Generation*: inyectar contexto recuperado en el prompt del LLM. | Evita que el modelo alucine: responde sobre los documentos reales. |
+| **Chunking** | División del documento en fragmentos manejables. | Se respeta la estructura legal (artículos, cláusulas, secciones). |
+| **Embeddings** | Representación vectorial del texto. Textos similares → vectores cercanos. | Alimentan la búsqueda semántica. |
+| **FAISS** | *Facebook AI Similarity Search*. Índice vectorial eficiente. | Búsqueda semántica sobre los chunks. |
+| **BM25** | *Best Matching 25*. Algoritmo léxico con TF-IDF y normalización. | Recuperación exacta de términos jurídicos. |
+| **RRF** | *Reciprocal Rank Fusion*. Fusión de rankings por posición recíproca. | Combina BM25 y FAISS sin modelos extra. |
+| **Streamlit** | Framework web en Python. | Interfaz de chat, carga de PDF y descarga de reportes. |
+| **pdfplumber** | Extracción de texto de PDFs. | Convierte PDFs legales en texto estructurado. |
+| **Grounding** | Anclar la respuesta del LLM a fuentes verificables. | Cada respuesta cita artículo/cláusula/página. |
+| **Hash + indexación incremental** | Detección de cambios por hash. | Evita reprocesar documentos sin modificaciones. |
+
+## 📁 Estructura del proyecto
+
+Mariano-LegRAG-IA/
+├── frontend.py # Interfaz Streamlit
+├── rag_pipeline.py # Pipeline RAG + DeepSeek R1
+├── vector_database.py # BM25 + FAISS + RRF
+├── requirements.txt # Dependencias
+├── README.md
+├── utils/ # Capturas y utilidades
+└── .streamlit/ # Configuración (si aplica)
+
+## ⚙️ Instalación
+
+### Requisitos
+- Python 3.8+
+- API key de DeepSeek ([platform.deepseek.com](https://platform.deepseek.com))
+- Git
+
+### Pasos
+
+```bash
+git clone https://github.com/bigdata5911/Mariano-LegRAG-IA
+cd Mariano-LegRAG-IA
+
+python -m venv venv
+source venv/bin/activate        # macOS/Linux
+venv\Scripts\activate           # Windows
+
+pip install -r requirements.txt
+
+
 
 ### 🏗️ Hacia un Context Engineering Multi-Etapa (Estándar Industrial)
 Para resolver esto, la ingeniería de RAG moderna exige pasar de una recuperación simple a una **arquitectura de recuperación estratificada**:
