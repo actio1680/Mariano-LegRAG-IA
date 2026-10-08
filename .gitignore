@@ -1,0 +1,70 @@
+# ============================================================
+# Mariano LegRAG IA - Archivos excluidos de Git
+# ============================================================
+
+# --- Entornos virtuales ---
+venv/
+.venv/
+env/
+ENV/
+venv_backup/
+
+# --- Caché de Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# --- Empaquetado ---
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+MANIFEST
+
+# --- Variables de entorno y secretos ---
+.env
+.env.*
+!.env.example
+
+# --- Estado de la app (se regenera) ---
+estado_documentos.json
+
+# --- Datos del usuario (PDFs y índices) ---
+pdfs/
+vectorstore/
+chroma_db/
+**/*.faiss
+**/*.pkl
+**/faiss_indices
+
+# --- Historiales y reportes generados ---
+historial_consultas_*.txt
+AI_Lawyer_Report.pdf
+
+# --- Configuración de IDE ---
+.vscode/
+.idea/
+.devcontainer/
+
+# --- Sistema operativo ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Logs ---
+*.log
+
+# --- Notebooks ---
+.ipynb_checkpoints/
+
+# --- Testing ---
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# --- nltk ---
+nltk_data/
