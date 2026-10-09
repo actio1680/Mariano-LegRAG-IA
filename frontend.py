@@ -492,7 +492,7 @@ st.markdown(
     """
     <div style='text-align: center; color: #888; font-size: 12px; padding: 10px 0;'>
         <b>Mariano LegRAG IA</b> — Proyecto desarrollado por <b>William Atencio Becerra</b>.<br>
-        © 2026 Actio1680. Todos los derechos liberados.
+        © 2026 Actio1680. MIT License.
     </div>
     """,
     unsafe_allow_html=True,
