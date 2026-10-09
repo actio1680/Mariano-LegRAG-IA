@@ -140,9 +140,10 @@ Mariano-LegRAG-IA/
 En la página de GitHub, pulsa el botón verde **`< > Code`** → **Download ZIP**. Descomprime en una carpeta, por ejemplo `C:\Mariano`.
 
 **Opción B — Con Git:**
-
 ```bash
 git clone https://github.com/actio1680/Mariano-LegRAG-IA
+```
+```bash
 cd Mariano-LegRAG-IA
 ```
 
@@ -150,15 +151,21 @@ cd Mariano-LegRAG-IA
 
 Abre **PowerShell** en la carpeta del proyecto (clic derecho dentro de la carpeta → "Abrir en Terminal"):
 
-```powershell
+```bash
 python -m venv venv
+```
+```bash
 .\venv\Scripts\Activate.ps1
+```
+```bash
 pip install -r requirements.txt
 ```
 
 > **Si PowerShell bloquea el script de activación:**
-> ```powershell
+> ```bash
 > Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
+> ```
+> ```bash
 > .\venv\Scripts\Activate.ps1
 > ```
 
@@ -166,13 +173,13 @@ La instalación tarda varios minutos. Descargará `torch`, `transformers` y dem�
 
 ### 3. Configurar la API key
 
-Crea un archivo llamado `.env` en la raíz del proyecto (copia `.env.example` y renómbralo) con:
+En la raíz del proyecto existe el archivo `.env.example`, renómbralo a `.env`; posteriormente, edita el contenido con tu clave (API key):
 
-```
+```bash
 DEEPSEEK_API_KEY=tu_api_key_aqui
 ```
 
-Obtén tu clave en [platform.deepseek.com](https://platform.deepseek.com) → sección **API Keys**.
+Obtén tu clave en [platform.deepseek.com](https://platform.deepseek.com) → sección **API Keys**. Puedes realizar la recarga desde $2 dólares en la sección **Top up**.
 
 > **Nota:** la primera vez que ejecutes la app, se descargará el modelo de embeddings legal en español (~1.2 GB). Tarda unos minutos. Después queda cacheado.
 
@@ -182,7 +189,7 @@ Obtén tu clave en [platform.deepseek.com](https://platform.deepseek.com) → se
 
 Con el entorno virtual activado:
 
-```powershell
+```bash
 streamlit run frontend.py
 ```
 
