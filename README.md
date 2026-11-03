@@ -50,7 +50,7 @@ Todo el procesamiento de documentos ocurre en local; solo los fragmentos necesar
 
 ## 🧠 Búsqueda híbrida
 
-En el dominio jurídico, la búsqueda vectorial por sí sola resulta insuficiente. Los embeddings **suavizan** identificadores normativos exactos —`Artículo 74`, `Ley 27.442`, `plazo perentorio`— y pueden devolver fragmentos *temáticamente próximos* pero *jurídicamente inexactos*: versiones derogadas, plazos incompatibles o jurisprudencia no vinculante.
+En el dominio jurídico, la búsqueda vectorial por sí sola resulta insuficiente. Los embeddings **suavizan** identificadores normativos exactos —`Artículo 74`, `Ley 27742`, `plazo perentorio`— y pueden devolver fragmentos *temáticamente próximos* pero *jurídicamente inexactos*: versiones derogadas, plazos incompatibles o jurisprudencia no vinculante.
 
 Mariano resuelve esta limitación combinando **tres capas de recuperación**:
 
