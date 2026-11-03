@@ -44,7 +44,7 @@ Todo el procesamiento de documentos ocurre en local; solo los fragmentos necesar
 
 ## 🏗️ Arquitectura
 
-![Arquitectura Mariano LegRAG IA](https://raw.githubusercontent.com/actio1680/Mariano-LegRAG-IA/refs/heads/main/image/arquitectura-Mariano-LegRAG-IA.jpg)
+![Arquitectura Mariano LegRAG IA](https://raw.githubusercontent.com/actio1680/Mariano-LegRAG-IA/refs/heads/main/image/arquitectura-Mariano-IA.jpg)
 
 ---
 
